@@ -4,7 +4,8 @@ let pod = new Pod();
 pod.login()
 .then((result) => {
   console.log(result);
-  return pod.getLessons();
+  return pod.getParentLessons();
 })
+.then(() => {return pod.getChildLessons()})
 .then((res) => {console.log(JSON.stringify(res));pod.end();})
 .catch((err) => {console.log(err)});

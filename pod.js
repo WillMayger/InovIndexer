@@ -49,7 +49,43 @@ export class Pod {
     });
   }
 
-  getLessons() {
+  getChildLessons() {
+    return new Promise((resolve, reject) => {
+      let i,
+          iChild,
+          length = this.lessons.levels.length;
+          for (i = 0; i < length; i++) {
+            let lengthChild = this.lessons.levels[i].childlevels.length;
+            for (iChild = 0; iChild < lengthChild; iChild++) {
+              console.log(this.lessons.levels[i])
+
+
+              this.horseman
+              .open(this.lessons.levels[i].childlevels[iChild].url)
+              .html()
+              .then((html) => {
+                cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((i, elem) => {
+
+                  let lesson = cheerio(elem);
+
+                  console.log(this.lessons.levels[i].childlevels[iChild])
+
+                  this.lessons.levels[i].childlevels[iChild].lessons.push(
+                    {name: lesson.text(), url: lesson.attr('href')}
+                  );
+
+
+                });
+                resolve(this.lessons.levels);
+              });
+
+          }
+        }
+
+    });
+  }
+
+  getParentLessons() {
     return new Promise((resolve, reject) => {
       this.horseman
       .open(this.baseURL + 'index.php?cat=Introduction')
@@ -65,7 +101,7 @@ export class Pod {
 
           levelObj = {name: levelName, url: 'https:' + level.attr('href'), childlevels: []};
           cheerio(elem).find('.ill-season-title').map((i, childelem) => {
-            levelObj.childlevels.push({name: cheerio(childelem).text(), url: cheerio(childelem).attr('href')})
+            levelObj.childlevels.push({name: cheerio(childelem).text(), url: cheerio(childelem).attr('href'), lessons: []})
           });
           this.lessons.levels.push(levelObj);
 
