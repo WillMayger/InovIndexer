@@ -1,0 +1,54 @@
+
+> frenchpod@1.0.0 start C:\Users\william.mayger\workspace\frenchpod
+> npm run build && node dist/main.js "=="
+
+
+> frenchpod@1.0.0 build C:\Users\william.mayger\workspace\frenchpod
+> rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files
+
+cred.js -> dist\cred.js
+main.js -> dist\main.js
+pod.js -> dist\pod.js
+true
+[ { name: 'Introduction',
+    url: 'https://www.frenchpod101.com/index.php?cat=Introduction',
+    childlevels: 
+     [ [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object] ] },
+  { name: 'Absolute Beginner',
+    url: 'https://www.frenchpod101.com/index.php?cat=Absolute+Beginner',
+    childlevels: 
+     [ [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object] ] },
+  { name: 'Beginner',
+    url: 'https://www.frenchpod101.com/index.php?cat=Beginner',
+    childlevels: 
+     [ [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object],
+       [Object] ] },
+  { name: 'Intermediate',
+    url: 'https://www.frenchpod101.com/index.php?cat=Intermediate',
+    childlevels: [ [Object], [Object], [Object], [Object] ] },
+  { name: 'Advanced',
+    url: 'https://www.frenchpod101.com/index.php?cat=Advanced',
+    childlevels: [ [Object], [Object], [Object], [Object] ] },
+  { name: 'Bonus Courses',
+    url: 'https://www.frenchpod101.com/index.php?cat=Bonus+Courses',
+    childlevels: [ [Object], [Object], [Object] ] } ]

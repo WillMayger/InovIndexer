@@ -8,7 +8,7 @@ export class Pod {
     this.horseman = horseman;
     this.baseURL = 'https://www.frenchpod101.com/';
     this.lessons = {
-
+      levels: []
     };
   }
 
@@ -49,26 +49,34 @@ export class Pod {
     });
   }
 
-  getUpperLessons() {
+  getLessons() {
     return new Promise((resolve, reject) => {
       this.horseman
         .open('https://www.frenchpod101.com/index.php?cat=Introduction')
         .html()
         .then((html) => {
-          var htmlDoc = cheerio.load(html);
-          let lessons = htmlDoc('.ill-level-title')
+          let htmlDoc = cheerio.load(html);
+          htmlDoc('.ill-levels').map(function(i, elem) {
+            let levelObj = {};
+            let level = cheerio(elem).find('.ill-level-title');
+            let levelName = level.text();
+            if(levelName === 'News & Announcements') {
+              return true;
+            }
+
+            levelObj = {name: levelName, url: 'https:' + cheerio(elem).find('.ill-level-title').attr('href'), childlevels: []};
+
+            cheerio(elem).find('.ill-season-title').map(function(i, childelem) {
+              levelObj.childlevels.push({name: cheerio(childelem).text(), url: cheerio(childelem).attr('href')})
+            }.bind(this));
+
+            this.lessons.levels.push(levelObj);
 
 
-          console.log(lessons);
-          let i;
-          let len = lessons.length;
-          for (i = 0; i < len; i++) {
-            console.log(cheerio.load(lessons[i]).text());
-            console.log(cheerio.load(lessons[i]).attr('href'));
-          }
-          resolve(lessons)
-        })
-    });
+          }.bind(this));
+          resolve(this.lessons.levels);
+        });
+        });
   }
 
 }

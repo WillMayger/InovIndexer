@@ -4,7 +4,7 @@ let pod = new Pod();
 pod.login()
 .then((result) => {
   console.log(result);
-  return pod.getUpperLessons();
+  return pod.getLessons();
 })
-.then(() => {pod.end()})
+.then((res) => {console.log(JSON.stringify(res));pod.end();})
 .catch((err) => {console.log(err)});
