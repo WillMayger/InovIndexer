@@ -51,32 +51,33 @@ export class Pod {
 
   getChildLessons() {
     return new Promise((resolve, reject) => {
-      let i,
+      let itt,
           length = this.lessons.levels.length;
-          for (i = 0; i < length; i++) {
-            let lengthChild = this.lessons.levels[i].childlevels.length,
+          for (itt = 0; itt < length; itt++) {
+            let lengthChild = this.lessons.levels[itt].childlevels.length,
                 iChild;
             for (iChild = 0; iChild < lengthChild; iChild++) {
-
-              //the below line is returining undefiend
-              // console.log(this.lessons.levels[i].childLevels[iChild])
-
-
               this.horseman
-              .open(this.lessons.levels[i].childlevels[iChild].url)
+              .open(this.lessons.levels[itt].childlevels[iChild].url)
               .html()
               .then((html) => {
-                cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((i, elem) => {
+                cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+
+                  //this "then" function is ran after the for loops have been
+                  // completed meaning that the end value is one larger than it should be
+                  //the below two if statements fix this
+                  if (iChild === lengthChild ) {
+                    iChild = iChild - 1;
+                  }
+
+                  if (itt === length) {
+                    itt = itt - 1;
+                  }
 
                   let lesson = cheerio(elem);
-
-                  console.log(this.lessons.levels[i].childlevels[iChild])
-
-                  this.lessons.levels[i].childlevels[iChild].lessons.push(
+                  this.lessons.levels[itt].childlevels[iChild].lessons.push(
                     {name: lesson.text(), url: lesson.attr('href')}
                   );
-
-
                 });
                 resolve(this.lessons.levels);
               });
@@ -103,9 +104,11 @@ export class Pod {
 
           levelObj = {name: levelName, url: 'https:' + level.attr('href'), childlevels: []};
           cheerio(elem).find('.ill-season-title').map((i, childelem) => {
-            levelObj.childlevels.push({name: cheerio(childelem).text(), url: cheerio(childelem).attr('href'), lessons: []})
+            levelObj.childlevels.push({name: cheerio(childelem).text(), url: cheerio(childelem).attr('href'), lessons: []});
           });
-          this.lessons.levels.push(levelObj);
+          if (Object.keys(levelObj).length !== 0) {
+            this.lessons.levels.push(levelObj);
+          }
 
         });
         resolve(this.lessons.levels);

@@ -8,4 +8,10 @@ pod.login()
 })
 .then(() => {return pod.getChildLessons()})
 .then((res) => {console.log(JSON.stringify(res));pod.end();})
-.catch((err) => {console.log(err)});
+.catch((err) => {
+  console.log(err);
+  console.log(pod.lessons);
+  pod.end();
+});
+
+//SOME LESSONS MAY BE IN DIFFERENT FORMAT (HTML)
