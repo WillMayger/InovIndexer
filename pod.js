@@ -52,12 +52,14 @@ export class Pod {
   getChildLessons() {
     return new Promise((resolve, reject) => {
       let i,
-          iChild,
           length = this.lessons.levels.length;
           for (i = 0; i < length; i++) {
-            let lengthChild = this.lessons.levels[i].childlevels.length;
+            let lengthChild = this.lessons.levels[i].childlevels.length,
+                iChild;
             for (iChild = 0; iChild < lengthChild; iChild++) {
-              console.log(this.lessons.levels[i])
+
+              //the below line is returining undefiend
+              // console.log(this.lessons.levels[i].childLevels[iChild])
 
 
               this.horseman
