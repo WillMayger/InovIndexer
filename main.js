@@ -11,7 +11,11 @@ pod.login()
   return pod.getParentLessons();
 })
 .then(() => {return pod.getChildLessons()})
-.then((res) => {console.log(JSON.stringify(res));pod.end();})
+.then((res) => {
+  console.log(res);
+  console.log(JSON.stringify(pod.lessons));
+  pod.end();
+})
 .catch((err) => {
   console.log(err);
   console.log(JSON.stringify(pod.lessons));

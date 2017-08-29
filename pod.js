@@ -1,6 +1,7 @@
 import { cred } from './cred';
 var Horseman = require("node-horseman");
 var cheerio = require('cheerio');
+var BluePromise = require("bluebird");
 
 export class Pod {
   constructor(lessonsObj) {
@@ -101,56 +102,128 @@ export class Pod {
   // });
   // }
 
-  getChildLessons() {
-    return new Promise((resolve, reject) => {
+  // getChildLessons() {
+  //
+  //       const promiArray = [];
+  //
+  //       //nested for loop is needed to get all information in object / arrays
+  //      this.lessons.levels.map((item, i) => {
+  //
+  //         item.childlevels.map((childItem, iChild) => {
+  //           promiArray.push(
+  //             new Promise((resolve, reject) => {
+  //               let iterator = i;
+  //               let childIterator = iChild;
+  //             //return async process with Promise.resolve();
+  //             console.log();
+  //             console.log('getting url: ' + this.lessons.levels[iterator].childlevels[childIterator].url);
+  //              this.horseman
+  //             .open(this.lessons.levels[iterator].childlevels[childIterator].url)
+  //             .html()
+  //             .then((html) => {
+  //               cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+  //                 let lesson = cheerio(elem);
+  //                 console.log('got url: ' + this.lessons.levels[iterator].childlevels[childIterator].url);
+  //                 console.log();
+  //
+  //
+  //                 childItem.lessons.push(
+  //                   {name: lesson.text(), url: lesson.attr('href')}
+  //                 );
+  //               });
+  //             })
+  //             .then(() => {
+  //               resolve('i++ done');
+  //             })
+  //             .catch((err) => {
+  //               reject(err);
+  //             });
+  //           })
+  //
+  //           );
+  //           });
+  //
+  //         });
+  //
+  //         return Promise.all(promiArray);
+  // }
 
-        const promiArray = [];
 
-        //nested for loop is needed to get all information in object / arrays
-       this.lessons.levels.map((item, i) => {
+//working async and waiting, however all firing at once causing issues for phantomJS
+    getChildLessons() {
 
-          item.childlevels.map((childItem, iChild) => {
-            promiArray.push(
-              new Promise((resolve, reject) => {
-              //return async process with Promise.resolve();
-              console.log();
-              console.log('getting url: ' + childItem.url);
-               this.horseman
-              .open(childItem.url)
-              .html()
-              .then((html) => {
-                cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
-                  let lesson = cheerio(elem);
-                  console.log('got url: ' + childItem.url);
-                  console.log();
+        return Promise.all([].concat(...this.lessons.levels.map((item, i) => {
 
+            return item.childlevels.map((childItem, iChild) => {
+                return new Promise((resolve, reject) => {
+                //return async process with Promise.resolve();
+                console.log();
+                console.log('getting url: ' + childItem.url);
 
-                  childItem.lessons.push(
-                    {name: lesson.text(), url: lesson.attr('href')}
-                  );
+                 this.horseman
+                .open(childItem.url)
+                .html()
+                .then((html) => {
+                  cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+                    let lesson = cheerio(elem);
+                    console.log('got url: ' + childItem.url);
+                    console.log();
+
+                    this.lessons.levels[i].childlevels[iChild].lessons.push(
+                      {name: lesson.text(), url: lesson.attr('href')}
+                    );
+                  });
+                })
+                .then(() => {
+                  resolve('i++ done');
+                })
+                .catch((err) => {
+                  reject(err);
                 });
-              })
-              .then(() => {
-                resolve('i++ done');
-              })
-              .catch((err) => {
-                reject(err);
               });
+
+              });
+
             })
+          ));
+    }
 
-            );
-            });
-
-          });
-          Promise.all(promiArray).then(() => {
-            resolve(this.lessons)
-          })
-          .catch((err) => {
-            reject(err);
-          });
-
-  });
-  }
+    // getChildLessons() {
+    //
+    //   const promi = Promise.resolve();
+    //
+    //   this.lessons.levels.map((item, i) => {
+    //
+    //               item.childlevels.map((childItem, iChild) => {
+    //                   //return async process with Promise.resolve();
+    //                   console.log();
+    //                   console.log('getting url: ' + childItem.url);
+    //                   promi.then(() => {
+    //
+    //                    this.horseman
+    //                   .open(childItem.url)
+    //                   .html()
+    //                   .then((html) => {
+    //                     cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+    //                       let lesson = cheerio(elem);
+    //                       console.log('got url: ' + childItem.url);
+    //                       console.log();
+    //
+    //                       this.lessons.levels[i].childlevels[iChild].lessons.push(
+    //                         {name: lesson.text(), url: lesson.attr('href')}
+    //                       );
+    //                     });
+    //                   });
+    //                 });
+    //                 });
+    //
+    //
+    //               });
+    //               return promi;
+    //
+    //
+    //
+    // }
 
   getParentLessons() {
     return new Promise((resolve, reject) => {
