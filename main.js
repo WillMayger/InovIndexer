@@ -3,15 +3,17 @@ import { Pod } from './pod';
 let pod = new Pod();
 pod.login()
 .then((result) => {
-  console.log(result);
+  if (result) {
+    console.log('logged in successfully')
+  } else {
+    console.log('Not logged in...');
+  }
   return pod.getParentLessons();
 })
 .then(() => {return pod.getChildLessons()})
 .then((res) => {console.log(JSON.stringify(res));pod.end();})
 .catch((err) => {
   console.log(err);
-  console.log(pod.lessons);
+  console.log(JSON.stringify(pod.lessons));
   pod.end();
 });
-
-//SOME LESSONS MAY BE IN DIFFERENT FORMAT (HTML)

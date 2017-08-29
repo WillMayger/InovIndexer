@@ -3,13 +3,18 @@ var Horseman = require("node-horseman");
 var cheerio = require('cheerio');
 
 export class Pod {
-  constructor() {
+  constructor(lessonsObj) {
     var horseman = new Horseman();
     this.horseman = horseman;
     this.baseURL = 'https://www.frenchpod101.com/';
-    this.lessons = {
-      levels: []
-    };
+
+    if (lessonsObj !== undefined) {
+      this.lessons = lessonsObj;
+    } else {
+      this.lessons = {
+        levels: []
+      };
+    }
   }
 
   login() {
@@ -32,7 +37,8 @@ export class Pod {
   }
 
   end() {
-    this.horseman.close();
+    // this.horseman.close();
+    console.log('fake close');
   }
 
   checkLogin() {
@@ -49,43 +55,101 @@ export class Pod {
     });
   }
 
+  // getChildLessons() {
+  //   return new Promise((resolve, reject) => {
+  //     Promise.all(
+  //
+  //       //nested for loop is needed to get all information in object / arrays
+  //      this.lessons.levels.map((item, i) => {
+  //
+  //         item.childlevels.map((childItem, iChild) => {
+  //
+  //           return ((i, iChild) => {
+  //
+  //             //return async process with Promise.resolve();
+  //             return this.horseman
+  //             .open(childItem.url)
+  //             .html()
+  //             .then((html) => {
+  //               cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+  //                 let lesson = cheerio(elem);
+  //
+  //                 childItem.lessons.push(
+  //                   {name: lesson.text(), url: lesson.attr('href')}
+  //                 );
+  //
+  //               });
+  //             })
+  //             .then(() => {
+  //                 return Promise.resolve();
+  //             }).catch((err) => {
+  //               reject(err);
+  //             });
+  //
+  //           })(i, iChild);
+  //
+  //         });
+  //     })
+  //
+  //     // Promise.all().then()
+  //   ).then(() => {
+  //     resolve(this.lesson);
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  // });
+  // }
+
   getChildLessons() {
     return new Promise((resolve, reject) => {
-      let itt,
-          length = this.lessons.levels.length;
-          for (itt = 0; itt < length; itt++) {
-            let lengthChild = this.lessons.levels[itt].childlevels.length,
-                iChild;
-            for (iChild = 0; iChild < lengthChild; iChild++) {
-              this.horseman
-              .open(this.lessons.levels[itt].childlevels[iChild].url)
+
+        const promiArray = [];
+
+        //nested for loop is needed to get all information in object / arrays
+       this.lessons.levels.map((item, i) => {
+
+          item.childlevels.map((childItem, iChild) => {
+            promiArray.push(
+              new Promise((resolve, reject) => {
+              //return async process with Promise.resolve();
+              console.log();
+              console.log('getting url: ' + childItem.url);
+               this.horseman
+              .open(childItem.url)
               .html()
               .then((html) => {
                 cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
-
-                  //this "then" function is ran after the for loops have been
-                  // completed meaning that the end value is one larger than it should be
-                  //the below two if statements fix this
-                  if (iChild === lengthChild ) {
-                    iChild = iChild - 1;
-                  }
-
-                  if (itt === length) {
-                    itt = itt - 1;
-                  }
-
                   let lesson = cheerio(elem);
-                  this.lessons.levels[itt].childlevels[iChild].lessons.push(
+                  console.log('got url: ' + childItem.url);
+                  console.log();
+
+
+                  childItem.lessons.push(
                     {name: lesson.text(), url: lesson.attr('href')}
                   );
                 });
-                resolve(this.lessons.levels);
+              })
+              .then(() => {
+                resolve('i++ done');
+              })
+              .catch((err) => {
+                reject(err);
               });
+            })
 
-          }
-        }
+            );
+            });
 
-    });
+          });
+          Promise.all(promiArray).then(() => {
+            resolve(this.lessons)
+          })
+          .catch((err) => {
+            reject(err);
+          });
+
+  });
   }
 
   getParentLessons() {
