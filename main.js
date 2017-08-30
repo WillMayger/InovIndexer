@@ -14,12 +14,15 @@ pod.login()
 })
 .then(() => {return pod.getChildLessons()})
 .then((res) => {
-  console.log(res);
-  console.log(JSON.stringify(pod.lessons));
+  console.log('finished getting child lessons')
+  return pod.getDownloadLinks();
+})
+.then((res) => {
+  console.log(JSON.stringify(pod.lessons.levels[3].childlevels[0].lessons[1]));
   pod.end();
 })
 .catch((err) => {
   console.log(err);
-  console.log(JSON.stringify(pod.lessons));
+  // console.log(JSON.stringify(pod.lessons));
   pod.end();
 });
