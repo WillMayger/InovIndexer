@@ -2,6 +2,7 @@ import { cred } from './cred';
 var Horseman = require("node-horseman");
 var cheerio = require('cheerio');
 var BluePromise = require("bluebird");
+var PromisePool = require('es6-promise-pool');
 
 export class Pod {
   constructor(lessonsObj) {
@@ -38,8 +39,7 @@ export class Pod {
   }
 
   end() {
-    // this.horseman.close();
-    console.log('fake close');
+    this.horseman.close();
   }
 
   checkLogin() {
@@ -150,43 +150,43 @@ export class Pod {
 
 
 //working async and waiting, however all firing at once causing issues for phantomJS
-    getChildLessons() {
-
-        return Promise.all([].concat(...this.lessons.levels.map((item, i) => {
-
-            return item.childlevels.map((childItem, iChild) => {
-                return new Promise((resolve, reject) => {
-                //return async process with Promise.resolve();
-                console.log();
-                console.log('getting url: ' + childItem.url);
-
-                 this.horseman
-                .open(childItem.url)
-                .html()
-                .then((html) => {
-                  cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
-                    let lesson = cheerio(elem);
-                    console.log('got url: ' + childItem.url);
-                    console.log();
-
-                    this.lessons.levels[i].childlevels[iChild].lessons.push(
-                      {name: lesson.text(), url: lesson.attr('href')}
-                    );
-                  });
-                })
-                .then(() => {
-                  resolve('i++ done');
-                })
-                .catch((err) => {
-                  reject(err);
-                });
-              });
-
-              });
-
-            })
-          ));
-    }
+    // getChildLessons() {
+    //
+    //     return Promise.all([].concat(...this.lessons.levels.map((item, i) => {
+    //
+    //         return item.childlevels.map((childItem, iChild) => {
+    //             return new Promise((resolve, reject) => {
+    //             //return async process with Promise.resolve();
+    //             console.log();
+    //             console.log('getting url: ' + childItem.url);
+    //
+    //              this.horseman
+    //             .open(childItem.url)
+    //             .html()
+    //             .then((html) => {
+    //               cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+    //                 let lesson = cheerio(elem);
+    //                 console.log('got url: ' + childItem.url);
+    //                 console.log();
+    //
+    //                 this.lessons.levels[i].childlevels[iChild].lessons.push(
+    //                   {name: lesson.text(), url: lesson.attr('href')}
+    //                 );
+    //               });
+    //             })
+    //             .then(() => {
+    //               resolve('i++ done');
+    //             })
+    //             .catch((err) => {
+    //               reject(err);
+    //             });
+    //           });
+    //
+    //           });
+    //
+    //         })
+    //       ));
+    // }
 
     // getChildLessons() {
     //
@@ -224,6 +224,58 @@ export class Pod {
     //
     //
     // }
+
+    //WOKRING!!!!
+    getChildLessons() {
+
+      const asyncProcess = (childItem, iChild, i) => {
+        return new Promise((resolve, reject) => {
+          console.log();
+          console.log('getting url: ' + childItem.url);
+
+          this.horseman
+          .open(childItem.url)
+          .html()
+          .then((html) => {
+            cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+              let lesson = cheerio(elem);
+              console.log('got url: ' + childItem.url);
+              console.log();
+
+              this.lessons.levels[i].childlevels[iChild].lessons.push(
+                {name: lesson.text(), url: lesson.attr('href')}
+              );
+            });
+          })
+          .then(() => {
+            resolve('i++ done');
+          })
+          .catch((err) => {
+            reject(err);
+          });
+        });
+      };
+
+      const generatePromises = function* () {
+        var i;
+        var iLength = this.lessons.levels.length;
+        for (i = 0; i < iLength; i++) {
+          var iChild;
+          var iChildLength = this.lessons.levels[i].childlevels.length;
+          for (iChild = 0; iChild < iChildLength; iChild++) {
+            yield asyncProcess(this.lessons.levels[i].childlevels[iChild], iChild, i);
+          }
+        }
+        // this.lessons.levels.map((item, i) => {
+        //    item.childlevels.map((childItem, iChild) => {
+        //   });
+        // });
+      }.bind(this);
+      const promiseIterator = generatePromises();
+      const pool = new PromisePool(promiseIterator, 1);
+
+      return pool.start().then(() => {console.log('done')});
+    }
 
   getParentLessons() {
     return new Promise((resolve, reject) => {
