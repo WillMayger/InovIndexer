@@ -10,17 +10,14 @@ pod.login()
   } else {
     console.log('Not logged in...');
   }
-  return pod.testLink();
+  return pod.getParentLessons();
 })
-.then((res) => {console.log(JSON.stringify(res))})
-// .then((res) => {
-  // console.log('finished getting child lessons')
-  // return pod.getDownloadLinks();
-// })
-// .then((res) => {
-  // console.log(JSON.stringify(pod.lessons.levels[3].childlevels[0].lessons[1]));
-  // pod.end();
-// })
+.then(() => {return pod.getChildLessons();})
+.then(() => {return pod.getDownloadLinks();})
+.then(() => {
+  console.log(JSON.stringify(pod.lessons.levels[3].childlevels[0].lessons[1]));
+  pod.end();
+})
 .catch((err) => {
   console.log(err);
   // console.log(JSON.stringify(pod.lessons));

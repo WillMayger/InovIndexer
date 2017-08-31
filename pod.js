@@ -57,64 +57,6 @@ export class Pod {
     });
   }
 
-  testLink() {
-    return new Promise((resolve, reject) => {
-      let testObj = {};
-      this.horseman
-      .open('https://www.frenchpod101.com/lesson/upper-beginner-1-the-french-train-wont-wait-for-us/')
-      .html()
-      .then((html) => {
-          let lessonHtml = cheerio(html);
-
-
-          //docs
-          let pdfs = lessonHtml.find('#pdfs ul li a');
-          pdfs.map((index, elem) => {
-            let pdfItem = cheerio(elem);
-            console.log(pdfItem);
-            switch (pdfItem.text().toLowerCase()) {
-              case 'lesson notes':
-                testObj.lessonnotes = pdfItem.attr('href');
-                break;
-              case 'lesson transcript':
-                testObj.lessontranscript = pdfItem.attr('href');
-                break;
-              case 'lesson notes':
-                testObj.lessonchecklist = pdfItem.attr('href');
-                break;
-              default:
-                break;
-            }
-          });
-
-          //audio
-          let audios = lessonHtml.find('#download-center ul li a');
-          audios.map((index, elem) => {
-            let audioItem = cheerio(elem);
-            switch (audioItem.text().toLowerCase()) {
-              case 'lesson audio':
-                testObj.lessonaudio = audioItem.attr('href');
-                break;
-              case 'review':
-                testObj.lessonreview = audioItem.attr('href');
-                break;
-              case 'dialog':
-                testObj.lessondialog = audioItem.attr('href');
-                break;
-              default:
-                break;
-            }
-          });
-      })
-      .then(() => {
-        resolve(testObj);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-    });
-  }
-
   getDownloadLinks() {
     console.log('getting downloadables...');
 
@@ -142,6 +84,8 @@ export class Pod {
         output: process.stdout
       });
 
+      console.log(' ');
+
       let itemIndex = 0;
       let itemsLength = counterLen;
 
@@ -152,6 +96,7 @@ export class Pod {
           readline.cursorTo(rl, 0);
           rl.write('Percentage Completed: 100%');
           rl.close();
+          console.log(' ');
           return true;
         }
         let oneP = itemIndex / itemsLength;
@@ -164,53 +109,54 @@ export class Pod {
       }
     })();
 
+    var addDownloadablesToObj = (html, iChild, i, iLesson) => {
+      let lessonHtml = cheerio(html);
+      //docs
+      let pdfs = lessonHtml.find('#pdfs ul li a');
+      pdfs.map((index, elem) => {
+        let pdfItem = cheerio(elem);
+        switch (pdfItem.text().toLowerCase()) {
+          case 'lesson notes':
+            this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonnotes = pdfItem.attr('href');
+            break;
+          case 'lesson transcript':
+            this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessontranscript = pdfItem.attr('href');
+            break;
+          case 'lesson notes':
+            this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonchecklist = pdfItem.attr('href');
+            break;
+          default:
+            break;
+        }
+      });
+
+      //audio
+      let audios = lessonHtml.find('#download-center ul li a');
+      audios.map((index, elem) => {
+        let audioItem = cheerio(elem);
+        switch (audioItem.text().toLowerCase()) {
+          case 'lesson audio':
+            this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonaudio = audioItem.attr('href');
+            break;
+          case 'review':
+            this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonreview = audioItem.attr('href');
+            break;
+          case 'dialog':
+            this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessondialog = audioItem.attr('href');
+            break;
+          default:
+            break;
+        }
+      });
+    };
+
     const asyncProcess = (lesson, iChild, i, iLesson) => {
       return new Promise((resolve, reject) => {
         this.horseman
         .open(lesson.url)
         .html()
         .then((html) => {
-          cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elemHTML) => {
-            let lessonHtml = cheerio(elemHTML);
-
-            //docs
-            let pdfs = lessonHtml.find('#pdfs ul li a');
-            pdfs.map((index, elem) => {
-              let pdfItem = cheerio(elem);
-              switch (pdfItem.text().toLowerCase()) {
-                case 'lesson notes':
-                  this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonnotes = pdfItem.attr('href');
-                  break;
-                case 'lesson transcript':
-                  this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessontranscript = pdfItem.attr('href');
-                  break;
-                case 'lesson notes':
-                  this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonchecklist = pdfItem.attr('href');
-                  break;
-                default:
-                  break;
-              }
-            });
-
-            //audio
-            let audios = lessonHtml.find('#download-center ul li a');
-            audios.map((index, elem) => {
-              let audioItem = cheerio(elem);
-              switch (audioItem.text().lower) {
-                case 'lesson audio':
-                  this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonaudio = audioItem.attr('href');
-                  break;
-                case 'review':
-                  this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonreview = audioItem.attr('href');
-                  break;
-                case 'dialog':
-                  this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessondialog = audioItem.attr('href');
-                  break;
-                default:
-                  break;
-              }
-            });
-          });
+            addDownloadablesToObj(html, iChild, i, iLesson);
         })
         .then(() => {
           resolve('done');
@@ -219,57 +165,17 @@ export class Pod {
           setTimeout(() => {
             this.horseman
             .open(lesson.url)
-            .wait(6000)
+            .wait(10000)
             .html()
             .then((html) => {
-              cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elemHTML) => {
-                let lessonHtml = cheerio(elemHTML);
-
-                //docs
-                let pdfs = lessonHtml.find('#pdfs ul li a');
-                pdfs.map((index, elem) => {
-                  let pdfItem = cheerio(elem);
-                  switch (pdfItem.text().lower) {
-                    case 'lesson notes':
-                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonnotes = pdfItem.attr('href');
-                      break;
-                    case 'lesson transcript':
-                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessontranscript = pdfItem.attr('href');
-                      break;
-                    case 'lesson notes':
-                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonchecklist = pdfItem.attr('href');
-                      break;
-                    default:
-                      break;
-                  }
-                });
-
-                //audio
-                let audios = lessonHtml.find('#download-center ul li a');
-                audios.map((index, elem) => {
-                  let audioItem = cheerio(elem);
-                  switch (audioItem.text().lower) {
-                    case 'lesson audio':
-                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonaudio = audioItem.attr('href');
-                      break;
-                    case 'review':
-                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonreview = audioItem.attr('href');
-                      break;
-                    case 'dialog':
-                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessondialog = audioItem.attr('href');
-                      break;
-                    default:
-                      break;
-                  }
-                });
-              });
+              addDownloadablesToObj(html, iChild, i, iLesson);
             })
             .then(() => {
               resolve('done');
             }).catch((err) => {
               reject(err);
             });
-          }, 6000);
+          }, 10000);
         });
       });
     };
@@ -321,6 +227,8 @@ export class Pod {
           output: process.stdout
         });
 
+        console.log(' ');
+
         let itemIndex = 0;
         let itemsLength = counterLen;
 
@@ -331,8 +239,10 @@ export class Pod {
             readline.cursorTo(rl, 0);
             rl.write('Percentage Completed: 100%');
             rl.close();
+            console.log(' ');
             return true;
           }
+
           let oneP = itemIndex / itemsLength;
           let percentage = parseInt(oneP * 100);
           readline.clearLine(rl, 0);
@@ -363,7 +273,7 @@ export class Pod {
               setTimeout(() => {
               this.horseman
               .open(childItem.url)
-              .wait(6000)
+              .wait(10000)
               .html()
               .then((html) => {
                 cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
@@ -379,7 +289,7 @@ export class Pod {
               .catch((err) => {
                 reject(err);
               });
-            }, 6000);
+            }, 10000);
             });
         });
       };
