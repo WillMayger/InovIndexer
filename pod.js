@@ -2,6 +2,7 @@ import { cred } from './cred';
 var Horseman = require("node-horseman");
 var cheerio = require('cheerio');
 var PromisePool = require('es6-promise-pool');
+const readline = require('readline');
 
 export class Pod {
   constructor(lessonsObj) {
@@ -16,6 +17,7 @@ export class Pod {
         levels: []
       };
     }
+
   }
 
   login() {
@@ -55,26 +57,127 @@ export class Pod {
     });
   }
 
+  testLink() {
+    return new Promise((resolve, reject) => {
+      let testObj = {};
+      this.horseman
+      .open('https://www.frenchpod101.com/lesson/upper-beginner-1-the-french-train-wont-wait-for-us/')
+      .html()
+      .then((html) => {
+          let lessonHtml = cheerio(html);
+
+
+          //docs
+          let pdfs = lessonHtml.find('#pdfs ul li a');
+          pdfs.map((index, elem) => {
+            let pdfItem = cheerio(elem);
+            console.log(pdfItem);
+            switch (pdfItem.text().toLowerCase()) {
+              case 'lesson notes':
+                testObj.lessonnotes = pdfItem.attr('href');
+                break;
+              case 'lesson transcript':
+                testObj.lessontranscript = pdfItem.attr('href');
+                break;
+              case 'lesson notes':
+                testObj.lessonchecklist = pdfItem.attr('href');
+                break;
+              default:
+                break;
+            }
+          });
+
+          //audio
+          let audios = lessonHtml.find('#download-center ul li a');
+          audios.map((index, elem) => {
+            let audioItem = cheerio(elem);
+            switch (audioItem.text().toLowerCase()) {
+              case 'lesson audio':
+                testObj.lessonaudio = audioItem.attr('href');
+                break;
+              case 'review':
+                testObj.lessonreview = audioItem.attr('href');
+                break;
+              case 'dialog':
+                testObj.lessondialog = audioItem.attr('href');
+                break;
+              default:
+                break;
+            }
+          });
+      })
+      .then(() => {
+        resolve(testObj);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+    });
+  }
+
   getDownloadLinks() {
     console.log('getting downloadables...');
 
+    let counterLen = (() => {
+      let totallength = 1;
+      var i;
+      var iLength = this.lessons.levels.length;
+      for (i = 0; i < iLength; i++) {
+        var iChild;
+        var iChildLength = this.lessons.levels[i].childlevels.length;
+        for (iChild = 0; iChild < iChildLength; iChild++) {
+          var iLesson;
+          var iLessonLength = this.lessons.levels[i].childlevels[iChild].lessons.length;
+          for (iLesson = 0; iLesson < iLessonLength; iLesson++) {
+            totallength += 1;
+          }
+        }
+      }
+      return totallength;
+    })();
+
+    var percentageDone = (() => {
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+      });
+
+      let itemIndex = 0;
+      let itemsLength = counterLen;
+
+      return () => {
+
+        if (itemIndex === itemsLength - 2) {
+          readline.clearLine(rl, 0);
+          readline.cursorTo(rl, 0);
+          rl.write('Percentage Completed: 100%');
+          rl.close();
+          return true;
+        }
+        let oneP = itemIndex / itemsLength;
+        let percentage = parseInt(oneP * 100);
+        readline.clearLine(rl, 0);
+        readline.cursorTo(rl, 0);
+        rl.write('Percentage Completed: ' + percentage + '%');
+        itemIndex += 1;
+        return false;
+      }
+    })();
+
     const asyncProcess = (lesson, iChild, i, iLesson) => {
       return new Promise((resolve, reject) => {
-
-        setTimeout(() => {
         this.horseman
         .open(lesson.url)
-        .wait(3000)
         .html()
         .then((html) => {
-          cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
-            let lessonHtml = cheerio(elem);
+          cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elemHTML) => {
+            let lessonHtml = cheerio(elemHTML);
 
             //docs
             let pdfs = lessonHtml.find('#pdfs ul li a');
             pdfs.map((index, elem) => {
               let pdfItem = cheerio(elem);
-              switch (pdfItem.text().lower) {
+              switch (pdfItem.text().toLowerCase()) {
                 case 'lesson notes':
                   this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonnotes = pdfItem.attr('href');
                   break;
@@ -113,9 +216,61 @@ export class Pod {
           resolve('done');
         })
         .catch((err) => {
-          reject(err);
+          setTimeout(() => {
+            this.horseman
+            .open(lesson.url)
+            .wait(6000)
+            .html()
+            .then((html) => {
+              cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elemHTML) => {
+                let lessonHtml = cheerio(elemHTML);
+
+                //docs
+                let pdfs = lessonHtml.find('#pdfs ul li a');
+                pdfs.map((index, elem) => {
+                  let pdfItem = cheerio(elem);
+                  switch (pdfItem.text().lower) {
+                    case 'lesson notes':
+                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonnotes = pdfItem.attr('href');
+                      break;
+                    case 'lesson transcript':
+                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessontranscript = pdfItem.attr('href');
+                      break;
+                    case 'lesson notes':
+                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonchecklist = pdfItem.attr('href');
+                      break;
+                    default:
+                      break;
+                  }
+                });
+
+                //audio
+                let audios = lessonHtml.find('#download-center ul li a');
+                audios.map((index, elem) => {
+                  let audioItem = cheerio(elem);
+                  switch (audioItem.text().lower) {
+                    case 'lesson audio':
+                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonaudio = audioItem.attr('href');
+                      break;
+                    case 'review':
+                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessonreview = audioItem.attr('href');
+                      break;
+                    case 'dialog':
+                      this.lessons.levels[i].childlevels[iChild].lessons[iLesson].lessondialog = audioItem.attr('href');
+                      break;
+                    default:
+                      break;
+                  }
+                });
+              });
+            })
+            .then(() => {
+              resolve('done');
+            }).catch((err) => {
+              reject(err);
+            });
+          }, 6000);
         });
-      }, 3000);
       });
     };
 
@@ -129,6 +284,7 @@ export class Pod {
           var iLesson;
           var iLessonLength = this.lessons.levels[i].childlevels[iChild].lessons.length;
           for (iLesson = 0; iLesson < iLessonLength; iLesson++) {
+            percentageDone();
             yield asyncProcess(this.lessons.levels[i].childlevels[iChild].lessons[iLesson], iChild, i, iLesson);
           }
         }
@@ -145,16 +301,56 @@ export class Pod {
     getChildLessons() {
       console.log('starting to get child lessons...');
 
+      let counterLen = (() => {
+        let totallength = 1;
+        var i;
+        var iLength = this.lessons.levels.length;
+        for (i = 0; i < iLength; i++) {
+          var iChild;
+          var iChildLength = this.lessons.levels[i].childlevels.length;
+          for (iChild = 0; iChild < iChildLength; iChild++) {
+            totallength += 1;
+          }
+        }
+        return totallength;
+      })();
+
+      var percentageDone = (() => {
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout
+        });
+
+        let itemIndex = 0;
+        let itemsLength = counterLen;
+
+        return () => {
+
+          if (itemIndex === itemsLength - 2) {
+            readline.clearLine(rl, 0);
+            readline.cursorTo(rl, 0);
+            rl.write('Percentage Completed: 100%');
+            rl.close();
+            return true;
+          }
+          let oneP = itemIndex / itemsLength;
+          let percentage = parseInt(oneP * 100);
+          readline.clearLine(rl, 0);
+          readline.cursorTo(rl, 0);
+          rl.write('Percentage Completed: ' + percentage + '%');
+          itemIndex += 1;
+          return false;
+        }
+      })();
+
       const asyncProcess = (childItem, iChild, i) => {
         return new Promise((resolve, reject) => {
-          setTimeout(() => {
             this.horseman
             .open(childItem.url)
             .html()
             .then((html) => {
               cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
                 let lesson = cheerio(elem);
-
                 this.lessons.levels[i].childlevels[iChild].lessons.push(
                   {name: lesson.text(), url: lesson.attr('href')}
                 );
@@ -164,19 +360,39 @@ export class Pod {
               resolve('done');
             })
             .catch((err) => {
-              reject(err);
+              setTimeout(() => {
+              this.horseman
+              .open(childItem.url)
+              .wait(6000)
+              .html()
+              .then((html) => {
+                cheerio(html).find('.ill-lessons-list .audio-lesson a.lesson-title').map((index, elem) => {
+                  let lesson = cheerio(elem);
+                  this.lessons.levels[i].childlevels[iChild].lessons.push(
+                    {name: lesson.text(), url: lesson.attr('href')}
+                  );
+                });
+              })
+              .then(() => {
+                resolve('done');
+              })
+              .catch((err) => {
+                reject(err);
+              });
+            }, 6000);
             });
-          }, 1000);
         });
       };
 
       const generatePromises = function* () {
+
         var i;
         var iLength = this.lessons.levels.length;
         for (i = 0; i < iLength; i++) {
           var iChild;
           var iChildLength = this.lessons.levels[i].childlevels.length;
           for (iChild = 0; iChild < iChildLength; iChild++) {
+            percentageDone();
             yield asyncProcess(this.lessons.levels[i].childlevels[iChild], iChild, i);
           }
         }
