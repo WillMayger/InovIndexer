@@ -23,6 +23,7 @@
     "node-horseman": "^3.3.0",
     "npm": "^5.3.0",
     "phantomjs": "^2.1.7",
+    "request": "^2.81.0",
     "rimraf": "^2.6.1"
   },
   "dependencies": {

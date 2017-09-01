@@ -7,7 +7,10 @@ let api = new GoogleAPI();
 
 api.Auth()
 .then(() => {
-  api.CreateFolder('wills new folder', ['0B6kmjkNdPZxsOFN1UGQ1Rk1zUDQ']);
+  return api.CreateFolder('wills new folder', ['0B6kmjkNdPZxsOFN1UGQ1Rk1zUDQ']);
+})
+.then((folderID) => {
+  return api.CreateFile('testtwo.mp3', [folderID], 'mp3');
 });
 //
 // let pod = new Pod();
