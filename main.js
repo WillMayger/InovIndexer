@@ -1,36 +1,22 @@
-import { Pod } from './pod';
-import { GoogleAPI } from './GoogleAPI';
 require("babel-core/register");
 require("babel-polyfill");
+import { Pod } from './lib/pod';
 
-let api = new GoogleAPI();
-
-api.Auth()
-.then(() => {
-  return api.CreateFolder('wills new folder', ['0B6kmjkNdPZxsOFN1UGQ1Rk1zUDQ']);
+let pod = new Pod();
+pod.login()
+.then((result) => {
+  if (result) {
+    console.log('logged in successfully')
+  } else {
+    console.log('Not logged in...');
+  }
+  return pod.getParentLessons();
 })
-.then((folderID) => {
-  return api.CreateFile('testtwo.mp3', [folderID], 'mp3');
+.then(() => {return pod.getChildLessons()})
+.then(() => {return pod.getDownloadLinks()})
+.then(() => {return pod.write()})
+.then(() => {return pod.end()})
+.catch((err) => {
+  console.log(err);
+  pod.end();
 });
-//
-// let pod = new Pod();
-// pod.login()
-// .then((result) => {
-//   if (result) {
-//     console.log('logged in successfully')
-//   } else {
-//     console.log('Not logged in...');
-//   }
-//   return pod.getParentLessons();
-// })
-// .then(() => {return pod.getChildLessons();})
-// .then(() => {return pod.getDownloadLinks();})
-// .then(() => {
-//   console.log(JSON.stringify(pod.lessons.levels[3].childlevels[0].lessons[1]));
-//   pod.end();
-// })
-// .catch((err) => {
-//   console.log(err);
-//   // console.log(JSON.stringify(pod.lessons));
-//   pod.end();
-// });

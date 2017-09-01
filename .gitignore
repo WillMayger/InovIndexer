@@ -1,3 +1,4 @@
 /node_modules
 /dist
-/cred.js
+/lib/cred.js
+/lessons
