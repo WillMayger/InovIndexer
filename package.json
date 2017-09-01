@@ -28,6 +28,8 @@
   "dependencies": {
     "async": "^2.5.0",
     "babel-preset-es2016": "^6.24.1",
-    "es6-promise-pool": "^2.5.0"
+    "es6-promise-pool": "^2.5.0",
+    "google-auth-library": "^0.10.0",
+    "googleapis": "^21.3.0"
   }
 }
