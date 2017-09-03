@@ -4,7 +4,7 @@ const fs = require('fs');
 import { Pod } from './lib/pod';
 
 //usecase if starting from new.
-let pod = new Pod(obj);
+let pod = new Pod();
 
 pod.login()
 .then((result) => {
