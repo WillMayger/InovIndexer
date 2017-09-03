@@ -17,7 +17,6 @@ pod.login()
   }
   return pod.getParentLessons();
 })
-.then(() => {
 .then(() => {return pod.getChildLessons()})
 .then(() => {return pod.getDownloadLinks()})
 .then(() => {return pod.write()})
