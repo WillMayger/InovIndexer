@@ -32,7 +32,7 @@ import { Indexer } from './lib/indexer';
 //------------------------------------------------------------------------------------
 
 var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
-let index = new Indexer(obj);
+let index = new Indexer({lessons: obj, resume: false});
 
 index.login()
 .then((result) => {
@@ -52,3 +52,30 @@ index.login()
   console.log(err);
   index.end();
 });
+
+
+//usecase if you have already started writing the downloads and had to stop for one reason or another
+//(generated & saved as lessons.json when other usecase has been run)
+//------------------------------------------------------------------------------------
+
+// var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+// let index = new Indexer({lessons: obj, resume: true});
+//
+// index.login()
+// .then((result) => {
+//   if (result) {
+//     console.log('logged in successfully')
+//   } else {
+//     console.log('Not logged in...');
+//     index.end();
+//     return 'err: not logged in';
+//   }
+//   return index.write();
+// })
+// .then((res) => {
+//   console.log(res);
+//   return index.end();})
+// .catch((err) => {
+//   console.log(err);
+//   index.end();
+// });
