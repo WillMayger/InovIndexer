@@ -1,28 +1,29 @@
 require("babel-core/register");
 require("babel-polyfill");
 const fs = require('fs');
-import { Pod } from './lib/pod';
+import { Indexer } from './lib/indexer';
 
 //usecase if starting from new.
-// let pod = new Pod();
+// let index = new Indexer();
 //
-// pod.login()
+// index.login()
 // .then((result) => {
 //   if (result) {
 //     console.log('logged in successfully')
 //   } else {
 //     console.log('Not logged in...');
-//     pod.end();
+//     index.end();
 //     return 'err: not logged in';
 //   }
-//   return pod.getParentLessons();
+//   return index.getParentLessons();
 // })
-// .then(() => {return pod.getChildLessons()})
-// .then(() => {return pod.getDownloadLinks()})
-// .then(() => {return pod.write()})
+// .then(() => {return index.getChildLessons()})
+// .then(() => {return index.getDownloadLinks()})
+// .then(() => {return index.writeJsonObj()})
+// .then(() => {return index.write()})
 // .catch((err) => {
 //   console.log(err);
-//   pod.end();
+//   index.end();
 // });
 
 
@@ -31,23 +32,23 @@ import { Pod } from './lib/pod';
 //------------------------------------------------------------------------------------
 
 var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
-let pod = new Pod(obj);
+let index = new Indexer(obj);
 
-pod.login()
+index.login()
 .then((result) => {
   if (result) {
     console.log('logged in successfully')
   } else {
     console.log('Not logged in...');
-    pod.end();
+    index.end();
     return 'err: not logged in';
   }
-  return pod.write();
+  return index.write();
 })
 .then((res) => {
   console.log(res);
-  return pod.end();})
+  return index.end();})
 .catch((err) => {
   console.log(err);
-  pod.end();
+  index.end();
 });
