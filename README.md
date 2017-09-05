@@ -48,7 +48,7 @@ index.login()
  You can then use this file to save time as this file contains all the indexing information.
  Just plug this file into the initiation of the class and run the write function.
 
- ```javascript
+```javascript
 
  var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
  let index = new Indexer({lessons: obj, resume: false});
@@ -72,14 +72,14 @@ index.login()
    index.end();
  });
 
- ```
+```
 
 ## 3. Usage - Continuing with download.
  Almost exactly the same as the previous step (2) however we need to pass in another
  option which is `resume` and this needs to be set to `true`.
  This will then continue downloading where you left off instead of starting again.
 
- ```javascript
+```javascript
 
  var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
  let index = new Indexer({lessons: obj, resume: true});
