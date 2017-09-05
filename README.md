@@ -16,6 +16,32 @@
 ## 1. Usage - Starting Fresh
  When running this for the first time you will want to use this option.
 
+```javascript
+
+let index = new Indexer();
+
+index.login()
+.then((result) => {
+  if (result) {
+    console.log('logged in successfully')
+  } else {
+    console.log('Not logged in...');
+    index.end();
+    return 'err: not logged in';
+  }
+  return index.getParentLessons();
+})
+.then(() => {return index.getChildLessons()})
+.then(() => {return index.getDownloadLinks()})
+.then(() => {return index.writeJsonObj()})
+.then(() => {return index.write()})
+.catch((err) => {
+  console.log(err);
+  index.end();
+});
+
+```
+
 ## 2. Usage - Starting with JSON File.
  When you have already run the first option once, if you ran it for enough time
  it would have generated a `lessons.json` file within the folder `lessons/`.
