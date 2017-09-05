@@ -2,3 +2,4 @@
 /dist
 /lib/cred.js
 /lessons
+.DS_Store
