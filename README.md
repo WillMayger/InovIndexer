@@ -1,4 +1,5 @@
 # Innov Indexer #
+# TO DO: https://stackoverflow.com/questions/2919878/git-rewrite-previous-commit-usernames-and-emails
 ## Contents
 ### 0. Intro.
 ### 1. Usage - Starting Fresh (Most Cases).
