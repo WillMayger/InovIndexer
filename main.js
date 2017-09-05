@@ -4,27 +4,16 @@ const fs = require('fs');
 import { Indexer } from './lib/indexer';
 
 //usecase if starting from new.
-// let index = new Indexer();
-//
-// index.login()
-// .then((result) => {
-//   if (result) {
-//     console.log('logged in successfully')
-//   } else {
-//     console.log('Not logged in...');
-//     index.end();
-//     return 'err: not logged in';
-//   }
-//   return index.getParentLessons();
-// })
-// .then(() => {return index.getChildLessons()})
-// .then(() => {return index.getDownloadLinks()})
-// .then(() => {return index.writeJsonObj()})
-// .then(() => {return index.write()})
-// .catch((err) => {
-//   console.log(err);
-//   index.end();
-// });
+let indexer = new Indexer();
+
+indexer.login()
+.then(() => {return indexer.startIndex()})
+.then(() => {return indexer.writeJsonObj()})
+.then(() => {return indexer.writeDownloadables()})
+.catch((err) => {
+  console.log(err);
+  indexer.end();
+});
 
 
 //usecase if already have json file indexing all lessons, sub lessons & download links
@@ -32,22 +21,11 @@ import { Indexer } from './lib/indexer';
 //------------------------------------------------------------------------------------
 
 // var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
-// let index = new Indexer({lessons: obj, resume: false});
+// let indexer = new Indexer({lessons: obj, resume: false});
 //
-// index.login()
-// .then((result) => {
-//   if (result) {
-//     console.log('logged in successfully')
-//   } else {
-//     console.log('Not logged in...');
-//     index.end();
-//     return 'err: not logged in';
-//   }
-//   return index.write();
-// })
-// .then((res) => {
-//   console.log(res);
-//   return index.end();})
+// indexer.login()
+// .then(() => {return indexer.writeDownloadables()})
+// .then(() => {return indexer.end()})
 // .catch((err) => {
 //   console.log(err);
 //   index.end();
@@ -58,23 +36,13 @@ import { Indexer } from './lib/indexer';
 //(generated & saved as lessons.json when other usecase has been run)
 //------------------------------------------------------------------------------------
 
-var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
-let index = new Indexer({lessons: obj, resume: true});
-
-index.login()
-.then((result) => {
-  if (result) {
-    console.log('logged in successfully')
-  } else {
-    console.log('Not logged in...');
-    index.end();
-    return 'err: not logged in';
-  }
-  return index.write();
-})
-.then(() => {
-  return index.end();})
-.catch((err) => {
-  console.log(err);
-  index.end();
-});
+// var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+// let indexer = new Indexer({lessons: obj, resume: true});
+//
+// indexer.login()
+// .then(() => {return indexer.writeDownloadables()})
+// .then(() => {return indexer.end()})
+// .catch((err) => {
+//   console.log(err);
+//   index.end();
+// });

@@ -1,4 +1,4 @@
-# Innovative Indexer #
+# Innov Indexer #
 ## Contents
 ### 0. Intro.
 ### 1. Usage - Starting Fresh (Most Cases).
