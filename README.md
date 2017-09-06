@@ -12,6 +12,8 @@
 1. clone this repository & make sure Node.js is installed (LTS) on your machine.
 2. run `npm install`.
 3. choose how you want to start the code (three choices below) all located in main.js.
+4. create a file in lib called `cred.js` and enter `export var cred = {pass: 'YourPasswordHere', email: 'YourEmail@here.com'};`
+5. create a file in lib called `urlbase.js` and enter `export var baseurl = 'https://thecertainurlhere.com/';`
 
 ## 1. Usage - Starting Fresh
  When running this for the first time you will want to use this option.
