@@ -19,27 +19,18 @@
 
 ```javascript
 
-let index = new Indexer();
+let indexer = new Indexer();
 
-index.login()
-.then((result) => {
-  if (result) {
-    console.log('logged in successfully')
-  } else {
-    console.log('Not logged in...');
-    index.end();
-    return 'err: not logged in';
-  }
-  return index.getParentLessons();
-})
-.then(() => {return index.getChildLessons()})
-.then(() => {return index.getDownloadLinks()})
-.then(() => {return index.writeJsonObj()})
-.then(() => {return index.write()})
+indexer.login()
+.then(() => {return indexer.startIndex()})
+.then(() => {return indexer.writeJsonObj()})
+.then(() => {return indexer.writeDownloadables()})
 .catch((err) => {
   console.log(err);
-  index.end();
+  indexer.end();
+  return;
 });
+
 
 ```
 
@@ -51,27 +42,17 @@ index.login()
 
 ```javascript
 
- var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
- let index = new Indexer({lessons: obj, resume: false});
+let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+let indexer = new Indexer({lessons: obj, resume: false});
 
- index.login()
- .then((result) => {
-   if (result) {
-     console.log('logged in successfully')
-   } else {
-     console.log('Not logged in...');
-     index.end();
-     return 'err: not logged in';
-   }
-   return index.write();
- })
- .then((res) => {
-   console.log(res);
-   return index.end();})
- .catch((err) => {
-   console.log(err);
-   index.end();
- });
+indexer.login()
+.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.end()})
+.catch((err) => {
+  console.log(err);
+  index.end();
+  return;
+});
 
 ```
 
@@ -82,25 +63,16 @@ index.login()
 
 ```javascript
 
- var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
- let index = new Indexer({lessons: obj, resume: true});
+let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+let indexer = new Indexer({lessons: obj, resume: true});
 
- index.login()
- .then((result) => {
-   if (result) {
-     console.log('logged in successfully')
-   } else {
-     console.log('Not logged in...');
-     index.end();
-     return 'err: not logged in';
-   }
-   return index.write();
- })
- .then(() => {
-   return index.end();})
- .catch((err) => {
-   console.log(err);
-   index.end();
- });
+indexer.login()
+.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.end()})
+.catch((err) => {
+  console.log(err);
+  index.end();
+  return;
+});
 
 ```

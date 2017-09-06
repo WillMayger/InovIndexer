@@ -21,7 +21,7 @@ indexer.login()
 //(generated & saved as lessons.json when other usecase has been run)
 //------------------------------------------------------------------------------------
 
-// var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+// let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
 // let indexer = new Indexer({lessons: obj, resume: false});
 //
 // indexer.login()
@@ -38,7 +38,7 @@ indexer.login()
 //(generated & saved as lessons.json when other usecase has been run)
 //------------------------------------------------------------------------------------
 
-// var obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+// let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
 // let indexer = new Indexer({lessons: obj, resume: true});
 //
 // indexer.login()
