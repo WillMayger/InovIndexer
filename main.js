@@ -6,6 +6,8 @@ import { Indexer } from './lib/indexer';
 //usecase if starting from new.
 let indexer = new Indexer();
 
+const testobj = {test: 'test'};
+
 indexer.login()
 .then(() => {return indexer.startIndex()})
 .then(() => {return indexer.writeJsonObj()})
