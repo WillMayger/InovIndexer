@@ -11,7 +11,7 @@ const testobj = {test: 'test'};
 indexer.login()
 .then(() => {return indexer.startIndex()})
 .then(() => {return indexer.writeJsonObj()})
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .catch((err) => {
   console.log(err);
   indexer.end();
@@ -27,7 +27,7 @@ indexer.login()
 // let indexer = new Indexer({lessons: obj, resume: false});
 //
 // indexer.login()
-// .then(() => {return indexer.writeDownloadables()})
+// .then(() => {return indexer.writeDownloads()})
 // .then(() => {return indexer.end()})
 // .catch((err) => {
 //   console.log(err);
@@ -44,7 +44,7 @@ indexer.login()
 // let indexer = new Indexer({lessons: obj, resume: true});
 //
 // indexer.login()
-// .then(() => {return indexer.writeDownloadables()})
+// .then(() => {return indexer.writeDownloads()})
 // .then(() => {return indexer.end()})
 // .catch((err) => {
 //   console.log(err);

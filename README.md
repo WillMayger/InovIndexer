@@ -25,7 +25,7 @@ let indexer = new Indexer();
 indexer.login()
 .then(() => {return indexer.startIndex()})
 .then(() => {return indexer.writeJsonObj()})
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .catch((err) => {
   console.log(err);
   indexer.end();
@@ -47,7 +47,7 @@ let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
 let indexer = new Indexer({lessons: obj, resume: false});
 
 indexer.login()
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .then(() => {return indexer.end()})
 .catch((err) => {
   console.log(err);
@@ -68,7 +68,7 @@ let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
 let indexer = new Indexer({lessons: obj, resume: true});
 
 indexer.login()
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .then(() => {return indexer.end()})
 .catch((err) => {
   console.log(err);
