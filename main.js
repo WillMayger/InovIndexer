@@ -6,8 +6,6 @@ import { Indexer } from './lib/indexer';
 //usecase if starting from new.
 let indexer = new Indexer();
 
-const testobj = {test: 'test'};
-
 indexer.login()
 .then(() => {return indexer.startIndex()})
 .then(() => {return indexer.writeJsonObj()})
@@ -31,7 +29,7 @@ indexer.login()
 // .then(() => {return indexer.end()})
 // .catch((err) => {
 //   console.log(err);
-//   index.end();
+//   indexer.end();
 //   return;
 // });
 
@@ -48,6 +46,6 @@ indexer.login()
 // .then(() => {return indexer.end()})
 // .catch((err) => {
 //   console.log(err);
-//   index.end();
+//   indexer.end();
 //   return;
 // });

@@ -16,19 +16,18 @@
     "rimraf": "^2.6.1"
   },
   "dependencies": {
-    "request": "^2.81.0",
-    "phantomjs": "^2.1.7",
-    "node-horseman": "^3.3.0",
-    "cheerio": "^1.0.0-rc.2",
-    "eslint": "^4.5.0",
-    "eslint-plugin-babel": "^4.1.2",
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2016": "^6.24.1",
+    "cheerio": "^1.0.0-rc.2",
     "es6-promise-pool": "^2.5.0",
-    "google-auth-library": "^0.10.0",
-    "googleapis": "^21.3.0",
+    "eslint": "^4.5.0",
+    "eslint-plugin-babel": "^4.1.2",
+    "node-horseman": "^3.3.0",
+    "phantomjs": "^2.1.7",
+    "prompt": "^1.0.0",
+    "request": "^2.81.0",
     "uuid": "^3.1.0"
   }
 }
