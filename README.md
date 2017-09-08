@@ -52,7 +52,7 @@ indexer.login()
 .then(() => {return indexer.end()})
 .catch((err) => {
   console.log(err);
-  index.end();
+  indexer.end();
   return;
 });
 
@@ -73,7 +73,7 @@ indexer.login()
 .then(() => {return indexer.end()})
 .catch((err) => {
   console.log(err);
-  index.end();
+  indexer.end();
   return;
 });
 
