@@ -1,4 +1,4 @@
-# Innov Indexer #
+# Inov Indexer #
 ## Contents
 ### 0. Intro.
 ### 1. Usage - Starting Fresh (Most Cases).
@@ -8,12 +8,13 @@
 ## 0. Intro
   Indexes links and download links from certain websites and then downloads them.
   Most of the application uses promises for ease.
+  Please ensure, when writing files, you have a minimum of 10gb available (for the audios)
 #### - Getting started
 1. clone this repository & make sure Node.js is installed (LTS) on your machine.
 2. run `npm install`.
 3. choose how you want to start the code (three choices below) all located in main.js.
-4. create a file in lib called `cred.js` and enter `export var cred = {pass: 'YourPasswordHere', email: 'YourEmail@here.com'};`
-5. create a file in lib called `urlbase.js` and enter `export var baseurl = 'https://thecertainurlhere.com/';`
+4. you will then be prompted for a url, and then your email and password for that url. (When calling the login class method)
+
 
 ## 1. Usage - Starting Fresh
  When running this for the first time you will want to use this option.
@@ -25,7 +26,7 @@ let indexer = new Indexer();
 indexer.login()
 .then(() => {return indexer.startIndex()})
 .then(() => {return indexer.writeJsonObj()})
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .catch((err) => {
   console.log(err);
   indexer.end();
@@ -47,7 +48,7 @@ let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
 let indexer = new Indexer({lessons: obj, resume: false});
 
 indexer.login()
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .then(() => {return indexer.end()})
 .catch((err) => {
   console.log(err);
@@ -68,7 +69,7 @@ let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
 let indexer = new Indexer({lessons: obj, resume: true});
 
 indexer.login()
-.then(() => {return indexer.writeDownloadables()})
+.then(() => {return indexer.writeDownloads()})
 .then(() => {return indexer.end()})
 .catch((err) => {
   console.log(err);
