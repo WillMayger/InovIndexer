@@ -21,17 +21,16 @@
 
 ```javascript
 
-let indexer = new Indexer();
+const indexer = new Indexer();
 
 indexer.login()
-.then(() => {return indexer.startIndex()})
-.then(() => {return indexer.writeJsonObj()})
-.then(() => {return indexer.writeDownloads()})
-.catch((err) => {
-  console.log(err);
-  indexer.end();
-  return;
-});
+  .then(() => indexer.startIndex())
+  .then(() => indexer.writeJsonObj())
+  .then(() => indexer.writeDownloads())
+  .catch((err) => {
+    console.log(err);
+    indexer.end();
+  });
 
 
 ```
@@ -44,17 +43,18 @@ indexer.login()
 
 ```javascript
 
-let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
-let indexer = new Indexer({lessons: obj, resume: false});
+const fs = require('fs');
+
+const obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+const indexer = new Indexer({ lessons: obj, resume: false });
 
 indexer.login()
-.then(() => {return indexer.writeDownloads()})
-.then(() => {return indexer.end()})
-.catch((err) => {
-  console.log(err);
-  indexer.end();
-  return;
-});
+  .then(() => indexer.writeDownloads())
+  .then(() => indexer.end())
+  .catch((err) => {
+    console.log(err);
+    indexer.end();
+  });
 
 ```
 
@@ -65,16 +65,17 @@ indexer.login()
 
 ```javascript
 
-let obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
-let indexer = new Indexer({lessons: obj, resume: true});
+const fs = require('fs');
+
+const obj = JSON.parse(fs.readFileSync('lessons.json', 'utf8'));
+const indexer = new Indexer({ lessons: obj, resume: true });
 
 indexer.login()
-.then(() => {return indexer.writeDownloads()})
-.then(() => {return indexer.end()})
-.catch((err) => {
-  console.log(err);
-  indexer.end();
-  return;
-});
+  .then(() => indexer.writeDownloads())
+  .then(() => indexer.end())
+  .catch((err) => {
+    console.log(err);
+    indexer.end();
+  });
 
 ```
